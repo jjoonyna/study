@@ -1,10 +1,11 @@
 package com.example.batchstudy_1;
 
 import com.example.batchstudy_1.batch.BatchStatus;
+import com.example.batchstudy_1.batch.Job;
 import com.example.batchstudy_1.batch.JobExcution;
+import com.example.batchstudy_1.batch.Tasklet;
 import com.example.batchstudy_1.customer.Customer;
 import com.example.batchstudy_1.customer.CustomerRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,17 +19,18 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = BatchStudy1Application.class)
-class DormantBatchJobTest {
+class JobTest {
 
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
     @Mock
-    private EmailProvider emailProvider;
+    Tasklet tasklet;
+    @Mock
+    JobExcution jobExcution;
 
     @Autowired
-    private DormantBatchJob dormantBatchJob;
+    private Job job;
 
     @BeforeEach
     public void setup() {
@@ -46,7 +48,7 @@ class DormantBatchJobTest {
         saveCustomer(364);
         saveCustomer(364);
 
-        final JobExcution result = dormantBatchJob.execute();
+        final JobExcution result = job.execute();
 
         final long dormantCount = customerRepository.findAll()
                 .stream()
@@ -72,7 +74,7 @@ class DormantBatchJobTest {
         saveCustomer(1);
         saveCustomer(1);
 
-        final JobExcution result = dormantBatchJob.execute();
+        final JobExcution result = job.execute();
 
         final long dormantCount = customerRepository.findAll()
                 .stream()
@@ -87,7 +89,7 @@ class DormantBatchJobTest {
     @Test
     @DisplayName("고객이 없는 경우에도 배치는 정상 작동 해야한다")
     void execute3() {
-        final JobExcution result = dormantBatchJob.execute();
+        final JobExcution result = job.execute();
 
         final long dormantCount = customerRepository.findAll()
                 .stream()
@@ -101,8 +103,8 @@ class DormantBatchJobTest {
     @Test
     @DisplayName("배치가 실패하면 BatchStatus는 FAILED 반환")
     void execute4() {
-        final DormantBatchJob dormantBatchJob = new DormantBatchJob(null, emailProvider);
-        final JobExcution result = dormantBatchJob.execute();
+        final Job job = new Job(null, null);
+        final JobExcution result = job.execute();
         assertEquals(BatchStatus.FAILED, result.getStatus());
     }
 
