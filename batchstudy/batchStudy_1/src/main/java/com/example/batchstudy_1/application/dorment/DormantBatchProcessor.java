@@ -1,4 +1,4 @@
-package com.example.batchstudy_1.application;
+package com.example.batchstudy_1.application.dorment;
 
 import com.example.batchstudy_1.batch.ItemProcessor;
 import com.example.batchstudy_1.customer.Customer;

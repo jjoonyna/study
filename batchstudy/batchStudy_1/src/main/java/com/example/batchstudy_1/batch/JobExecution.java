@@ -9,8 +9,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class JobExcution {
+public class JobExecution {
+
     private BatchStatus status;
+
     private LocalDateTime startTime;
+
     private LocalDateTime endTime;
+
 }

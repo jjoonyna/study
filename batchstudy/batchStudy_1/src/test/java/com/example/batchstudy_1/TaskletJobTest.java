@@ -1,9 +1,6 @@
 package com.example.batchstudy_1;
 
-import com.example.batchstudy_1.batch.BatchStatus;
-import com.example.batchstudy_1.batch.Job;
-import com.example.batchstudy_1.batch.JobExcution;
-import com.example.batchstudy_1.batch.Tasklet;
+import com.example.batchstudy_1.batch.*;
 import com.example.batchstudy_1.customer.Customer;
 import com.example.batchstudy_1.customer.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,18 +16,13 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = BatchStudy1Application.class)
-class JobTest {
+class TaskletJobTest {
 
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Mock
-    Tasklet tasklet;
-    @Mock
-    JobExcution jobExcution;
-
     @Autowired
-    private Job job;
+    private Job dormantBatchJob;
 
     @BeforeEach
     public void setup() {
@@ -48,7 +40,7 @@ class JobTest {
         saveCustomer(364);
         saveCustomer(364);
 
-        final JobExcution result = job.execute();
+        final JobExecution result = dormantBatchJob.execute();
 
         final long dormantCount = customerRepository.findAll()
                 .stream()
@@ -57,7 +49,7 @@ class JobTest {
 
 
         assertEquals(3,dormantCount);
-        assertEquals(BatchStatus.FINISHED,result.getStatus());
+        assertEquals(BatchStatus.COMPLETED,result.getStatus());
     }
 
     @Test
@@ -74,7 +66,7 @@ class JobTest {
         saveCustomer(1);
         saveCustomer(1);
 
-        final JobExcution result = job.execute();
+        final JobExecution result = dormantBatchJob.execute();
 
         final long dormantCount = customerRepository.findAll()
                 .stream()
@@ -83,13 +75,13 @@ class JobTest {
 
 
         assertEquals(0,dormantCount);
-        assertEquals(BatchStatus.FINISHED,result.getStatus());
+        assertEquals(BatchStatus.COMPLETED,result.getStatus());
     }
 
     @Test
     @DisplayName("고객이 없는 경우에도 배치는 정상 작동 해야한다")
     void execute3() {
-        final JobExcution result = job.execute();
+        final JobExecution result = dormantBatchJob.execute();
 
         final long dormantCount = customerRepository.findAll()
                 .stream()
@@ -97,14 +89,14 @@ class JobTest {
                 .count();
 
         assertEquals(0,dormantCount);
-        assertEquals(BatchStatus.FINISHED,result.getStatus());
+        assertEquals(BatchStatus.COMPLETED,result.getStatus());
     }
 
     @Test
     @DisplayName("배치가 실패하면 BatchStatus는 FAILED 반환")
     void execute4() {
-        final Job job = new Job(null, null);
-        final JobExcution result = job.execute();
+        final TaskletJob taskletJob = new TaskletJob(null);
+        final JobExecution result = taskletJob.execute();
         assertEquals(BatchStatus.FAILED, result.getStatus());
     }
 

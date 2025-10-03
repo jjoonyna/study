@@ -9,6 +9,7 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -25,10 +26,8 @@ public class Customer {
 
     private LocalDateTime createAt;
 
-    @Setter
     private LocalDateTime loginAt;
 
-    @Setter
     private Status status;
 
     public Customer(String name, String email) {
@@ -36,10 +35,20 @@ public class Customer {
         this.email = email;
         this.createAt = LocalDateTime.now();
         this.loginAt = LocalDateTime.now();
-        this.status = Status.NOMAL;
+        this.status = Status.NORMAL;
     }
-    public enum Status{
-        NOMAL,
+
+    public void setLoginAt(LocalDateTime loginAt) {
+        this.loginAt = loginAt;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public enum Status {
+        NORMAL,
         DORMANT;
     }
+
 }

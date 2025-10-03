@@ -6,7 +6,8 @@ import lombok.ToString;
 @Getter
 @ToString
 public enum BatchStatus {
-    STARTED,
+
+    STARTING,
     FAILED,
-    FINISHED
+    COMPLETED
 }
